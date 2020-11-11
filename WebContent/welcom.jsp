@@ -24,6 +24,7 @@
 				<%=tagline%>
 			</h3>
 			<%
+				response.setIntHeader("Refresh", 5); // 페이지 새로고침
 				Date day = new java.util.Date();
 				String am_pm;
 				int hour = day.getHours();
