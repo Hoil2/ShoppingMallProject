@@ -1,18 +1,28 @@
 <%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="com.oreilly.servlet.*" %>
+<%@ page import="com.oreilly.servlet.multipart.*" %>
+<%@ page import="java.util.*" %>
 <%@ page import="dto.Product"%>
 <%@ page import="dao.ProductRepository"%>
 
 <%
 	request.setCharacterEncoding("UTF-8");
 
-	String productId = request.getParameter("productId");
-	String name = request.getParameter("name");
-	String unitPrice = request.getParameter("unitPrice");
-	String description = request.getParameter("description");
-	String manufacturer = request.getParameter("manufacturer");
-	String category = request.getParameter("category");
-	String unitsInStoke = request.getParameter("unitsInStoke");
-	String condition = request.getParameter("condition");
+	String filename = "";
+	String realFolder = "C:\\upload";
+	String encType = "utf-8";
+	int maxSize = 5 * 1024 * 1024;
+
+	MultipartRequest multi = new MultipartRequest(request, realFolder, maxSize, encType, new DefaultFileRenamePolicy());
+	
+	String productId = multi.getParameter("productId");
+	String name = multi.getParameter("name");
+	String unitPrice = multi.getParameter("unitPrice");
+	String description = multi.getParameter("description");
+	String manufacturer = multi.getParameter("manufacturer");
+	String category = multi.getParameter("category");
+	String unitsInStoke = multi.getParameter("unitsInStoke");
+	String condition = multi.getParameter("condition");
 	
 	Integer price;
 	
@@ -28,6 +38,10 @@
 	else 
 		stock = Long.valueOf(unitsInStoke);
 	
+	Enumeration files = multi.getFileNames();
+	String fname = (String)files.nextElement();
+	String fileName = multi.getFilesystemName(fname);
+	
 	ProductRepository dao = ProductRepository.getInstance();
 	
 	Product newProduct = new Product();
@@ -39,6 +53,7 @@
 	newProduct.setCategory(category);
 	newProduct.setUnitsInStoke(stock);
 	newProduct.setCondition(condition);
+	newProduct.setFilename(fileName);
 	
 	dao.addProduct(newProduct);
 	
